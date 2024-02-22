@@ -28,6 +28,7 @@ interface ResponseStructure {
 export const requestConfig: RequestConfig = {
   baseURL: 'http://localhost:8080/api',
   withCredentials: true,
+  timeout: 1000000,
   // 错误处理： umi@3 的错误处理方案。
   errorConfig: {
     // 错误抛出

@@ -9,7 +9,7 @@ import {
   ProFormText,
 } from '@ant-design/pro-components';
 import {history, useModel, Helmet} from '@umijs/max';
-import {Alert, message, Tabs} from 'antd';
+import {message, Tabs} from 'antd';
 import Settings from '../../../../config/defaultSettings';
 import React, {useState} from 'react';
 import {createStyles} from 'antd-style';
@@ -39,22 +39,7 @@ const useStyles = createStyles(({token}) => {
     },
   };
 });
-const LoginMessage: React.FC<{
-  content: string;
-}> = ({content}) => {
-  return (
-    <Alert
-      style={{
-        marginBottom: 24,
-      }}
-      message={content}
-      type="error"
-      showIcon
-    />
-  );
-};
 const Login: React.FC = () => {
-  const [userLoginState] = useState<API.LoginResult>({});
   const [type, setType] = useState<string>('account');
   const {setInitialState} = useModel('@@initialState');
   const {styles} = useStyles();
@@ -82,7 +67,6 @@ const Login: React.FC = () => {
       message.error(defaultLoginFailureMessage);
     }
   };
-  const {status, type: loginType} = userLoginState;
   return (
     <div className={styles.container}>
       <Helmet>
@@ -103,7 +87,7 @@ const Login: React.FC = () => {
           }}
           logo={<img alt="logo" src="/logo.svg"/>}
           title="用户管理中心"
-          subTitle={'Ant Design 是西湖区最具影响力的 Web 设计规范'}
+          subTitle={'阿巴阿巴阿巴'}
           initialValues={{
             autoLogin: true,
           }}
@@ -118,14 +102,11 @@ const Login: React.FC = () => {
             items={[
               {
                 key: 'account',
-                label: '账户密码登录',
+                label: '账户登录',
               },
             ]}
           />
 
-          {status === 'error' && loginType === 'account' && (
-            <LoginMessage content={'错误的用户名和密码'}/>
-          )}
           {type === 'account' && (
             <>
               <ProFormText
