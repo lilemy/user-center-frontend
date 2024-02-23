@@ -69,7 +69,6 @@
     "gh-pages": "^3.2.3",
     "husky": "^7.0.4",
     "lint-staged": "^10.5.4",
-    "mockjs": "^1.1.0",
     "prettier": "^2.8.8",
     "react-dev-inspector": "^1.9.0",
     "swagger-ui-dist": "^4.19.1",

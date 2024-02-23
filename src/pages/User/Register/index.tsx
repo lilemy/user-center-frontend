@@ -7,12 +7,13 @@ import {
   LoginForm,
   ProFormText,
 } from '@ant-design/pro-components';
-import {history, useModel, Helmet, Link} from '@umijs/max';
+import {history, Helmet} from '@umijs/max';
 import {message, Tabs} from 'antd';
 import Settings from '../../../../config/defaultSettings';
 import React, {useState} from 'react';
 import {createStyles} from 'antd-style';
-import {userLogin} from "@/services/user-center/userController";
+import {userRegister} from "@/services/user-center/userController";
+import {Link} from "@@/exports";
 
 const useStyles = createStyles(({token}) => {
   return {
@@ -38,42 +39,47 @@ const useStyles = createStyles(({token}) => {
     },
   };
 });
-const Login: React.FC = () => {
+const Register: React.FC = () => {
   const [type, setType] = useState<string>('account');
-  const {setInitialState} = useModel('@@initialState');
   const {styles} = useStyles();
-  const handleSubmit = async (values: API.UserLoginRequest) => {
+  const handleSubmit = async (values: API.UserRegisterRequest) => {
+    const {userPassword, checkPassword} = values;
+    // 校验
+    if (userPassword !== checkPassword) {
+      message.error('两次输入的密码不一致');
+      return;
+    }
+
     try {
-      // 登录
-      const msg = await userLogin({
+      // 注册
+      const msg = await userRegister({
         ...values,
       });
       if (msg.data) {
-        const defaultLoginSuccessMessage = '登录成功！';
-        message.success(defaultLoginSuccessMessage);
-        setInitialState({
-          loginUser: msg.data,
+        const defaultRegisterSuccessMessage = '注册成功！';
+        message.success(defaultRegisterSuccessMessage);
+
+        /** 此方法会跳转到 redirect 参数所在的位置 */
+        if (!history) return;
+        history.push({
+          pathname: '/user/login',
         });
-        setTimeout(() => {
-          const urlParams = new URL(window.location.href).searchParams;
-          history.push(urlParams.get('redirect') || '/');
-        }, 100);
         return;
+      } else {
+        const defaultRegisterFailureMessage = msg.message;
+        message.error(defaultRegisterFailureMessage);
       }
     } catch (error) {
-      const defaultLoginFailureMessage = '登录失败，请重试！';
-      console.log(error);
-      message.error(defaultLoginFailureMessage);
+      const defaultRegisterFailureMessage = '注册失败，请重试！';
+      message.error(defaultRegisterFailureMessage);
     }
+
   };
-  const forgetPassword = async () => {
-    message.error("忘了就改数据库吧！")
-  }
   return (
     <div className={styles.container}>
       <Helmet>
         <title>
-          {'登录'}- {Settings.title}
+          {'注册'}- {Settings.title}
         </title>
       </Helmet>
       <div
@@ -83,6 +89,11 @@ const Login: React.FC = () => {
         }}
       >
         <LoginForm
+          submitter={{
+            searchConfig: {
+              submitText: '注册'
+            }
+          }}
           contentStyle={{
             minWidth: 280,
             maxWidth: '75vw',
@@ -94,7 +105,7 @@ const Login: React.FC = () => {
             autoLogin: true,
           }}
           onFinish={async (values) => {
-            await handleSubmit(values as API.UserLoginRequest);
+            await handleSubmit(values as API.UserRegisterRequest);
           }}
         >
           <Tabs
@@ -104,7 +115,7 @@ const Login: React.FC = () => {
             items={[
               {
                 key: 'account',
-                label: '账号登录',
+                label: '用户注册',
               },
             ]}
           />
@@ -149,22 +160,33 @@ const Login: React.FC = () => {
                   },
                 ]}
               />
+              <ProFormText.Password
+                name="checkPassword"
+                fieldProps={{
+                  size: 'large',
+                  prefix: <LockOutlined/>,
+                }}
+                placeholder={'请再次输入密码: '}
+                rules={[
+                  {
+                    required: true,
+                    message: '确认密码是必填项！',
+                  },
+                  {
+                    min: 6,
+                    type: 'string',
+                    message: '密码长度不能小于 6 位',
+                  },
+                ]}
+              />
             </>
           )}
           <div
             style={{
               marginBottom: 24,
-            }}
-          >
-            <Link to="/user/register">新用户注册</Link>
-            <a
-              onClick={forgetPassword}
-              style={{
-                float: 'right',
-              }}
-            >
-              忘记密码 ?
-            </a>
+              float: "right"
+            }}>
+            <Link to="/user/login">去登录</Link>
           </div>
         </LoginForm>
       </div>
@@ -172,4 +194,4 @@ const Login: React.FC = () => {
     </div>
   );
 };
-export default Login;
+export default Register;

@@ -69,7 +69,7 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({menu, children
         flushSync(() => {
           setInitialState((s) => ({...s, currentUser: undefined}));
         });
-        loginOut();
+        loginOut().then(() => "");
         return;
       }
       history.push(`/account/${key}`);
@@ -79,6 +79,7 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({menu, children
 
   const loading = (
     <span className={styles.action}>
+      <a onClick={loginOut}>退出登录</a>
       <Spin
         size="small"
         style={{
@@ -87,6 +88,7 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({menu, children
         }}
       />
     </span>
+
   );
 
   if (!initialState) {
@@ -123,7 +125,6 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({menu, children
       label: '退出登录',
     },
   ];
-
   return (
     <HeaderDropdown
       menu={{
