@@ -89,7 +89,7 @@ const Login: React.FC = () => {
           }}
           logo={<img alt="logo" src="/logo.svg"/>}
           title="用户管理中心"
-          subTitle={'阿巴阿巴阿巴'}
+          subTitle={'一个简单的用户管理系统'}
           initialValues={{
             autoLogin: true,
           }}
